@@ -167,7 +167,7 @@ create table if not exists medical_staff
     dob            date                                not null,
     carier_start   date default null,
     sex            sex                                 not null,
-    qualification  medical_qualification               not null,
+    qualification  medical_qualification default null,
     specialization medical_specialization              not null,
     profile        medical_profile                     not null,
     created_at     timestamp default CURRENT_TIMESTAMP not null,

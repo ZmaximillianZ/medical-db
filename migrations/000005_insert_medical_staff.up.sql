@@ -4,7 +4,6 @@ insert into medical_staff (
     middle_name,
     dob,
     sex,
-    qualification,
     specialization,
     profile,
     created_at
@@ -15,12 +14,11 @@ select
     (array['Александрович','Алексеевич','Анатольевич','Андреевич','Антонович','Аркадьевич','Артемович','Бедросович','Богданович','Борисович','Валентинович','Валерьевич','Васильевич','Викторович','Витальевич','Владимирович','Владиславович','Вольфович','Вячеславович','Геннадиевич','Георгиевич','Григорьевич','Данилович','Денисович','Дмитриевич','Евгеньевич','Егорович','Ефимович','Иванович','Иваныч','Игнатьевич','Игоревич','Ильич','Иосифович','Исаакович','Кириллович','Константинович','Леонидович','Львович','Максимович','Матвеевич','Михайлович','Николаевич','Олегович','Павлович','Палыч','Петрович','Платонович','Робертович','Романович','Саныч','Северинович','Семенович','Сергеевич','Станиславович','Степанович','Тарасович','Тимофеевич','Федорович','Феликсович','Филиппович','Эдуардович','Юрьевич','Яковлевич','Ярославович'])[floor(random() * 64 + 1)],
     (now() - interval '25 year') - '50 years'::interval * random(),
     'мужской',
-    (array['мед. сестра'::medical_qualification, 'младший персонал'::medical_qualification, 'средний персонал'::medical_qualification, 'старший персонал'::medical_qualification])[floor(random() * 4 + 1)],
     (array['инфекционист'::medical_specialization, 'эпидемиолог'::medical_specialization, 'реаниматолог'::medical_specialization, 'хирург'::medical_specialization, 'дерматовенеролог'::medical_specialization])[floor(random() * 5 + 1)],
     (array['нейроинфекции'::medical_profile, 'воздушно-капельные инфекции'::medical_profile, 'гепатит'::medical_profile, 'ВИЧ-инфекции'::medical_profile, 'оппортунистические инфекции'::medical_profile, 'кожные и венерические инфекции'::medical_profile])[floor(random() * 6 + 1)],
     now() - '7 years'::interval * random()
 from
-    generate_series(1, 25);
+    generate_series(1, 50);
 
 insert into medical_staff (
     first_name,
@@ -28,7 +26,6 @@ insert into medical_staff (
     middle_name,
     dob,
     sex,
-    qualification,
     specialization,
     profile,
     created_at
@@ -40,11 +37,18 @@ select
     (array[ 'Александровна', 'Алексеевна', 'Анатольевна', 'Андреевна', 'Антоновна', 'Аркадьевна', 'Артемовна', 'Богдановна', 'Борисовна', 'Валентиновна', 'Валерьевна', 'Васильевна', 'Викторовна', 'Виталиевна', 'Владимировна', 'Владиславовна', 'Вячеславовна', 'Геннадиевна', 'Георгиевна', 'Григорьевна', 'Даниловна', 'Денисовна', 'Дмитриевна', 'Евгеньевна', 'Егоровна', 'Ефимовна', 'Ивановна', 'Игоревна', 'Ильинична', 'Иосифовна', 'Кирилловна', 'Константиновна', 'Леонидовна', 'Львовна', 'Максимовна', 'Матвеевна', 'Михайловна', 'Николаевна', 'Олеговна', 'Павловна', 'Петровна', 'Платоновна', 'Робертовна', 'Романовна', 'Семеновна', 'Сергеевна', 'Станиславовна', 'Степановна', 'Тарасовна', 'Тимофеевна', 'Федоровна', 'Феликсовна', 'Филипповна', 'Эдуардовна', 'Юрьевна', 'Яковлевна', 'Ярославовна'])[floor(random() * 56 + 1)],
     (now() - interval '25 year') - '50 years'::interval * random(),
     'женский',
-    (array['мед. сестра'::medical_qualification, 'младший персонал'::medical_qualification, 'средний персонал'::medical_qualification, 'старший персонал'::medical_qualification])[floor(random() * 4 + 1)],
     (array['инфекционист'::medical_specialization, 'эпидемиолог'::medical_specialization, 'реаниматолог'::medical_specialization, 'хирург'::medical_specialization, 'дерматовенеролог'::medical_specialization])[floor(random() * 5 + 1)],
     (array['нейроинфекции'::medical_profile, 'воздушно-капельные инфекции'::medical_profile, 'гепатит'::medical_profile, 'ВИЧ-инфекции'::medical_profile, 'оппортунистические инфекции'::medical_profile, 'кожные и венерические инфекции'::medical_profile])[floor(random() * 6 + 1)],
     now() - '7 years'::interval * random()
 from
-    generate_series(1, 25);
+    generate_series(1, 50);
 
+update medical_staff set qualification='мед. сестра'::medical_qualification
+where dob < (now() - interval '25 year') and dob > (now() - interval '60 year') and sex='женский';
+update medical_staff set qualification='младший персонал'::medical_qualification
+where dob < (now() - interval '23 year') and dob >= (now() - interval '40 year') and qualification is null;
+update medical_staff set qualification='средний персонал'::medical_qualification
+where dob < (now() - interval '40 year') and dob >= (now() - interval '50 year') and qualification is null;
+update medical_staff set qualification='старший персонал'::medical_qualification
+where dob < (now() - interval '50 year') and qualification is null;
 
