@@ -91,24 +91,6 @@ create table if not exists hospitalization
 alter table hospitalization
     owner to postgres;
 
-create table if not exists diagnosis
-(
-    id                 serial
-        constraint diagnosis_pk
-            primary key,
-    status             diagnosis_status,
-    created_at         timestamp default CURRENT_TIMESTAMP not null,
-    updated_at         timestamp default CURRENT_TIMESTAMP not null,
-    parent             integer,
-    hospitalization_id integer
-        constraint diagnosis_hospitalization_id_fk
-            references hospitalization
-            on delete cascade
-);
-
-alter table diagnosis
-    owner to postgres;
-
 create table if not exists department
 (
     id           serial
@@ -116,11 +98,31 @@ create table if not exists department
             primary key,
     name         varchar(128)                        not null,
     created_at   timestamp default CURRENT_TIMESTAMP not null,
-    updated_at   timestamp default CURRENT_TIMESTAMP not null,
-    diagnosis_id integer
-        constraint department_diagnosis_id_fk_2
-            references diagnosis
+    updated_at   timestamp default CURRENT_TIMESTAMP not null
 );
+
+alter table department
+    owner to postgres;
+
+create table if not exists diagnosis
+(
+    id                 serial
+    constraint diagnosis_pk
+    primary key,
+    status             diagnosis_status,
+    created_at         timestamp default CURRENT_TIMESTAMP not null,
+    updated_at         timestamp default CURRENT_TIMESTAMP not null,
+    parent             integer,
+    hospitalization_id integer
+        constraint diagnosis_hospitalization_id_fk
+        references hospitalization,
+    department_id integer
+        constraint diagnosis_department_id_fk
+        references department
+);
+
+alter table diagnosis
+    owner to postgres;
 
 create table if not exists ward
 (
@@ -139,9 +141,6 @@ create table if not exists ward
 );
 
 alter table ward
-    owner to postgres;
-
-alter table department
     owner to postgres;
 
 create table if not exists medical_staff
