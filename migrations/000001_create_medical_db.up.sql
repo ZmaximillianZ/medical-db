@@ -109,33 +109,63 @@ create table if not exists diagnosis
 alter table diagnosis
     owner to postgres;
 
-create table if not exists ward
+create table if not exists department
 (
     id           serial
+        constraint department_pk
+            primary key,
+    name         varchar(128)                        not null,
+    created_at   timestamp default CURRENT_TIMESTAMP not null,
+    updated_at   timestamp default CURRENT_TIMESTAMP not null,
+    diagnosis_id integer
+        constraint department_diagnosis_id_fk_2
+            references diagnosis
+);
+
+create table if not exists ward
+(
+    id            serial
         constraint ward_pk
             primary key,
-    number       varchar(32),
-    capacity     bigint,
-    service      service,
-    type         ward_type,
-    created_at   timestamp default CURRENT_TIMESTAMP not null,
-    updated_at   timestamp default CURRENT_TIMESTAMP not null
+    number        varchar(32),
+    capacity      bigint,
+    service       service,
+    type          ward_type,
+    created_at    timestamp default CURRENT_TIMESTAMP not null,
+    updated_at    timestamp default CURRENT_TIMESTAMP not null,
+    department_id integer
+        constraint ward_department_id_fk_1
+            references department
 );
 
 alter table ward
     owner to postgres;
 
-create table if not exists diagnosis_ward
-(
-    ward_id integer
-        constraint diagnosis_ward_id_fk_1
-            references ward,
-    diagnosis_id integer
-        constraint diagnosis_ward_id_fk_2
-            references diagnosis
-);
+alter table department
+    owner to postgres;
 
-alter table diagnosis_ward
+create table if not exists medical_staff
+(
+    id             serial
+    constraint medical_staff_pk
+    primary key,
+    first_name     varchar(32)                         not null,
+    last_name      varchar(32)                         not null,
+    middle_name    varchar(32)                         not null,
+    dob            date                                not null,
+    carier_start   date default null,
+    sex            sex                                 not null,
+    qualification  medical_qualification default null,
+    specialization medical_specialization              not null,
+    profile        medical_profile                     not null,
+    created_at     timestamp default CURRENT_TIMESTAMP not null,
+    updated_at     timestamp default CURRENT_TIMESTAMP not null,
+    department_id  integer
+        constraint medical_staff_department_id_fk
+            references department
+    );
+
+alter table medical_staff
     owner to postgres;
 
 create table if not exists disinfection_schedule
@@ -154,45 +184,5 @@ create table if not exists disinfection_schedule
 );
 
 alter table disinfection_schedule
-    owner to postgres;
-
-create table if not exists medical_staff
-(
-    id             serial
-        constraint medical_staff_pk
-            primary key,
-    first_name     varchar(32)                         not null,
-    last_name      varchar(32)                         not null,
-    middle_name    varchar(32)                         not null,
-    dob            date                                not null,
-    carier_start   date default null,
-    sex            sex                                 not null,
-    qualification  medical_qualification default null,
-    specialization medical_specialization              not null,
-    profile        medical_profile                     not null,
-    created_at     timestamp default CURRENT_TIMESTAMP not null,
-    updated_at     timestamp default CURRENT_TIMESTAMP not null
-);
-
-alter table medical_staff
-    owner to postgres;
-
-create table if not exists department
-(
-    id               serial
-        constraint department_pk
-            primary key,
-    name             varchar(32)                         not null,
-    created_at       timestamp default CURRENT_TIMESTAMP not null,
-    updated_at       timestamp default CURRENT_TIMESTAMP not null,
-    medical_staff_id integer
-        constraint department_medical_staff_id_fk
-            references medical_staff,
-    ward_id          integer
-        constraint department_ward_id_fk
-            references ward
-);
-
-alter table department
     owner to postgres;
 

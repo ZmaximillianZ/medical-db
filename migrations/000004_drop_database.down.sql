@@ -1,13 +1,14 @@
+alter table patient
+drop constraint patient_medical_staff_id_fk;
 drop table contact;
 drop table address;
+drop table medical_staff;
 drop table disinfection_schedule;
-drop table department;
-drop table diagnosis_ward;
 drop table ward;
+drop table department;
 drop table diagnosis;
 drop table hospitalization;
 drop table patient;
-drop table medical_staff;
 drop type if exists sex;
 drop type if exists patient_status;
 drop type if exists hospitalization_type;
