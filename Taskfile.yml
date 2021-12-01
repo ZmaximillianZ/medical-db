@@ -1,0 +1,27 @@
+version: '3'
+
+vars:
+  NETWORK: host
+  PATH: /migrations
+  DATABASE: postgres://postgres:postgres@0.0.0.0:5432/medical?sslmode=disable
+
+tasks:
+  default:
+    desc: Start environment containers
+    cmds:
+      - docker-compose up -d
+
+  stop:
+    desc: Stop environment containers
+    cmds:
+      - docker-compose down
+
+  up:
+    desc: Apply all migrations
+    cmds:
+      - docker run --rm -v $PWD/migrations:/migrations --network {{.NETWORK}} migrate/migrate -path={{.PATH}} -database {{.DATABASE}} up
+
+  down:
+    desc: Rollback all migrations
+    cmds:
+      - docker run --rm -v $PWD/migrations:/migrations --network {{.NETWORK}} migrate/migrate -path={{.PATH}} -database {{.DATABASE}} down --all
