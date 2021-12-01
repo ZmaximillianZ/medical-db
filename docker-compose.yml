@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres:10-alpine
+    container_name: 2sem
+    volumes:
+      - 2sem-db-volume:/var/lib/postgresql/data
+    environment:
+     - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+volumes:
+  2sem-db-volume:
+    name: 2sem-db-volume
