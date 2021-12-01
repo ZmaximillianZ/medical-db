@@ -1,23 +1,18 @@
 ## Run migration
 
-Windows:
+**Requirements**: [task](https://taskfile.dev/#/installation), [docker (with docker-compose)](https://docs.docker.com/engine/install/)
 
-up:
-```
-docker run --rm -v $PWD\migrations:/migrations --network host migrate/migrate -path=/migrations -database postgres://postgres:postgres@0.0.0.0:5432/medical?sslmode=disable up
-```
-down:
-```
-docker run --rm -v $PWD\migrations:/migrations --network host migrate/migrate -path=/migrations -database postgres://postgres:postgres@0.0.0.0:5432/medical?sslmode=disable down --all
-```
 
-Linux:
+``` bash
+# start environment
+task
 
-up:
-```
-docker run --rm -v $PWD/migrations:/migrations --network host migrate/migrate -path=/migrations -database postgres://postgres:postgres@0.0.0.0:5432/medical?sslmode=disable up
-```
-down:
-```
-docker run --rm -v $PWD/migrations:/migrations --network host migrate/migrate -path=/migrations -database postgres://postgres:postgres@0.0.0.0:5432/medical?sslmode=disable down --all
+# apply migrations
+task up
+
+# rollback migrations
+task down
+
+# stop environment
+task stop
 ```
