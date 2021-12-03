@@ -6,7 +6,7 @@ insert into patient (
     sex,
     has_insurance,
     status,
-    created_at
+    medical_staff_id
 )
 select
     (array['Максим', 'Александр', 'Алексей', 'Денис', 'Михаил', 'Иван', 'Григорий', 'Василий', 'Олег', 'Константин', 'Владимир', 'Сергей', 'Анатолий', 'Инокентий', 'Константин', 'Филлип', 'Геннадий', 'Николай', 'Павел', 'Андрей', 'Степан', 'Кирилл '])[floor(random() * 22 + 1)],
@@ -16,7 +16,7 @@ select
     'мужской',
     (round(random())::int)::boolean,
     (array['нормальное'::patient_status, 'критическое'::patient_status, 'легкое'::patient_status])[floor(random() * 3 + 1)],
-    now() - '7 years'::interval * random()
+    (select array (select id from medical_staff))[floor(random() * (select count(id) from medical_staff) + 1)]
 from
     generate_series(1, 5000);
 
@@ -28,7 +28,7 @@ insert into patient (
     sex,
     has_insurance,
     status,
-    created_at
+    medical_staff_id
 )
 select
     (array['София', 'Инна', 'Ольга', 'Елизавета', 'Светлана', 'Анна', 'Маргарита', 'Мария', 'Яна', 'Диана', 'Снежана', 'Елена', 'Анастасия', 'Виолетта', 'Кристина', 'Регина', 'Алина', 'Алеся', 'Оксана', 'Ирина', 'Кира', 'Карина '])[floor(random() * 21 + 1)],
@@ -38,6 +38,13 @@ select
     'женский',
     (round(random())::int)::boolean,
     (array['нормальное'::patient_status, 'критическое'::patient_status, 'легкое'::patient_status])[floor(random() * 3 + 1)],
-    now() - '7 years'::interval * random()
+    (select array (select id from medical_staff))[floor(random() * (select count(id) from medical_staff) + 1)]
 from
     generate_series(1, 5000);
+
+with medical_staff_created_at as (
+    select created_at as synced_created_at, id from medical_staff
+) update patient as p
+set created_at=(now() - (now() - medical_staff_created_at.synced_created_at)::interval * random())
+from medical_staff_created_at
+where p.medical_staff_id=medical_staff_created_at.id;
