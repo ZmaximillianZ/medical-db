@@ -104,26 +104,6 @@ create table if not exists department
 alter table department
     owner to postgres;
 
-create table if not exists diagnosis
-(
-    id                 serial
-    constraint diagnosis_pk
-    primary key,
-    status             diagnosis_status,
-    created_at         timestamp default CURRENT_TIMESTAMP not null,
-    updated_at         timestamp default CURRENT_TIMESTAMP not null,
-    parent             integer,
-    hospitalization_id integer
-        constraint diagnosis_hospitalization_id_fk
-        references hospitalization,
-    department_id integer
-        constraint diagnosis_department_id_fk
-        references department
-);
-
-alter table diagnosis
-    owner to postgres;
-
 create table if not exists ward
 (
     id            serial
@@ -141,6 +121,26 @@ create table if not exists ward
 );
 
 alter table ward
+    owner to postgres;
+
+create table if not exists diagnosis
+(
+    id                 serial
+    constraint diagnosis_pk
+    primary key,
+    status             diagnosis_status,
+    created_at         timestamp default CURRENT_TIMESTAMP not null,
+    updated_at         timestamp default CURRENT_TIMESTAMP not null,
+    parent             integer,
+    hospitalization_id integer
+        constraint diagnosis_hospitalization_id_fk
+        references hospitalization,
+    ward_id integer
+        constraint diagnosis_ward_id_fk
+        references ward
+);
+
+alter table diagnosis
     owner to postgres;
 
 create table if not exists medical_staff

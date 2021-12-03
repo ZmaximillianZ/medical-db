@@ -3,14 +3,15 @@ insert into diagnosis (
     created_at,
     updated_at,
     hospitalization_id,
-    department_id
+    ward_id
 )
 with hospitalization_created_at as (
-    select h.id, start_at, ms.department_id as department_id
+    select h.id, start_at, w.id as ward_id
     from hospitalization h
              left join patient p on h.patient_id = p.id
              left join medical_staff ms on ms.id = p.medical_staff_id
              left join department d on d.id = ms.department_id
+             left join ward w on d.id = w.department_id
     order by random()
 )
 select
@@ -18,7 +19,7 @@ select
     start_at,
     start_at,
     id,
-    department_id
+    ward_id -- заполнение с учетом вместимости палаты!
 from
     hospitalization_created_at;
 
