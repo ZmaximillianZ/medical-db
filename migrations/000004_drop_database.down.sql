@@ -16,3 +16,4 @@ drop type if exists ward_type;
 drop type if exists medical_qualification;
 drop type if exists medical_specialization;
 drop type if exists medical_profile;
+drop function if exists ward_capacity();
