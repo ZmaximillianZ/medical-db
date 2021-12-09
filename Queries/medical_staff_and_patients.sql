@@ -1,17 +1,19 @@
 -- «Общий список врачей с количеством больных и больных с количеством дней пребывания» (запрос на объединение)
--- todo: добавить условие фильтрации пациентов которых госпитализировали более одного раза
 select
-       count(p.id) as join_number,
-       ms.first_name as first_name,
-       ms.last_name as last_name,
-       ms.middle_name as middle_name
+       count(p.id) as patients_number,
+       ms.last_name || ' ' || ms.first_name || ' ' || ms.middle_name as full_name
 from medical_staff ms
 left join patient p on ms.id=p.medical_staff_id
-union
+left join hospitalization h on p.id = h.patient_id
+where h.start_at > '2021-01-01' and h.start_at < '2021-01-23'
+group by ms.first_name, ms.last_name, ms.middle_name;
+--union
 select
-       DATE_PART('day', AGE(DATE(h.start_at), DATE(h.start_at))) AS join_number,
-       p.first_name as first_name,
-       p.last_name as last_name,
-       p.middle_name as middle_name
+       -- COALESCE нужен для тех пациентов которые были в госпитализированы менее одного дня
+       COALESCE(DATE_PART('day', h.end_at - h.start_at), 1) AS days_hospitalization,
+       p.last_name || ' ' || p.first_name || ' ' || p.middle_name as full_name
 from patient p
-left join hospitalization h on p.id=h.patient_id;
+left join hospitalization h on p.id=h.patient_id
+group by h.end_at, h.start_at, p.first_name, p.last_name,p.middle_name;
+--пациенты которые госпитализированы более одного месяца
+--having DATE_PART('day', h.end_at - h.start_at) >= 30;
