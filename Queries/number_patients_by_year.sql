@@ -3,5 +3,5 @@ select
        extract(year from created_at) as year,
        count(id) as sick_number
 from patient
-group by extract(year from created_at)
+group by year
 order by year;

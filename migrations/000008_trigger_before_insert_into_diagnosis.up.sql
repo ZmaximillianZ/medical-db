@@ -1,6 +1,7 @@
 create function ward_capacity() returns trigger as $ward_capacity$
 declare
     current_ward record;
+    current_sex sex;
 begin
     if NEW.ward_id is not null then
         return NEW;
@@ -10,7 +11,9 @@ begin
     for current_ward in
         select
                id,
-               capacity
+               capacity,
+               department_id,
+               type
         from ward
         where department_id = (
             select department_id
@@ -21,15 +24,27 @@ begin
             limit 1
             )
         loop
+            current_sex := (
+                select p.sex
+                from patient p
+                left join hospitalization h on p.id = h.patient_id
+                where h.id=NEW.hospitalization_id
+                limit 1
+            );
             -- если количество пациентов текущей палаты меньше ее вместимости на дату создания
             -- диагноза, то то присваиваем палату к диагнозу.
-            if (select COUNT(ward_id)
+            if ((select COUNT(ward_id)
                 from diagnosis
                 left join hospitalization h on h.id = diagnosis.hospitalization_id
                 where ward_id=current_ward.id and
                       h.start_at < NEW.created_at and
                       h.end_at > NEW.created_at
-               ) < current_ward.capacity then
+               ) < current_ward.capacity) and
+               (
+                    (current_sex='мужской' and (current_ward.type='мужская' or current_ward.type='смешанная')) or
+                    (current_sex='женский' and (current_ward.type='женская' or current_ward.type='смешанная'))
+               )
+            then
                 NEW.ward_id=current_ward.id;
                 exit;
             else

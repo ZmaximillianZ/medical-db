@@ -2,7 +2,6 @@
 select
        count(h.id) as number_of_patients,
        w.capacity,
-       w.id,
        w.number as ward_number,
        w.type,
        w.service,

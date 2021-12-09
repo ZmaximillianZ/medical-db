@@ -7,9 +7,9 @@ insert into diagnosis (
 with hospitalization_created_at as (
     select h.id, start_at
     from hospitalization h
-             left join patient p on h.patient_id = p.id
-             left join medical_staff ms on ms.id = p.medical_staff_id
-             left join department d on d.id = ms.department_id
+    left join patient p on h.patient_id = p.id
+    left join medical_staff ms on ms.id = p.medical_staff_id
+    left join department d on d.id = ms.department_id
     -- сортируем по дате госпитализации для правильной проверки заполненности палаты на дату добавления диагноза
     order by start_at
 )

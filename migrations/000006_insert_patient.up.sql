@@ -18,7 +18,7 @@ select
     (array['нормальное'::patient_status, 'критическое'::patient_status, 'легкое'::patient_status])[floor(random() * 3 + 1)],
     (select array (select id from medical_staff))[floor(random() * (select count(id) from medical_staff) + 1)]
 from
-    generate_series(1, 5000);
+    generate_series(1, 20000);
 
 insert into patient (
     first_name,
@@ -40,7 +40,7 @@ select
     (array['нормальное'::patient_status, 'критическое'::patient_status, 'легкое'::patient_status])[floor(random() * 3 + 1)],
     (select array (select id from medical_staff))[floor(random() * (select count(id) from medical_staff) + 1)]
 from
-    generate_series(1, 5000);
+    generate_series(1, 20000);
 
 with medical_staff_created_at as (
     select created_at as synced_created_at, id from medical_staff
