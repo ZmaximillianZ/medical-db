@@ -9,57 +9,64 @@
 --  В качестве параметра использовать диагноз, и заменять для
 --  такого пациента его лечащего врача на того, у кого меньше всего больных.
 
-create or replace function ward_status() returns record as $$
+create or replace function ward_status()
+    returns table (
+                      number varchar,
+                      capacity bigint,
+                      status varchar
+                  )
+    language plpgsql
+as $$
 begin
-    with ward_capacity_and_fullness as (
+    return query with ward_capacity_and_fullness as (
         select
-            w.number as number,
-            w.capacity as capacity,
-            'мужская' as status
+            w.number as number1,
+            w.capacity as capacity1,
+            'мужская' as status1
         from ward w
                  left join diagnosis d on w.id = d.ward_id
                  left join hospitalization h on h.id = d.hospitalization_id
                  left join patient p on p.id = h.patient_id
         where h.start_at > '2021-07-07' and h.start_at < '2021-07-08' and w.type='мужская'
-        group by number, capacity
+        group by w.number, w.capacity
         having count(d.ward_id)<w.capacity
         union all
         select
-            w.number as number,
-            w.capacity as capacity,
-            'женская' as status
+            w.number as number1,
+            w.capacity as capacity1,
+            'женская' as status1
         from ward w
                  left join diagnosis d on w.id = d.ward_id
                  left join hospitalization h on h.id = d.hospitalization_id
                  left join patient p on p.id = h.patient_id
         where h.start_at > '2021-07-07' and h.start_at < '2021-07-08' and w.type='женская'
-        group by number, capacity
+        group by w.number, w.capacity
         having count(d.ward_id)<w.capacity
         union all
         select
-            w.number as number,
-            w.capacity as capacity,
-            'смешанная' as status
+            w.number as number1,
+            w.capacity as capacity1,
+            'смешанная' as status1
         from ward w
                  left join diagnosis d on w.id = d.ward_id
                  left join hospitalization h on h.id = d.hospitalization_id
                  left join patient p on p.id = h.patient_id
         where h.start_at > '2021-07-07' and h.start_at < '2021-07-08' and w.type='смешанная'
-        group by number, capacity
+        group by w.number, w.capacity
         having count(d.ward_id)<w.capacity
         union all
         select
-            w.number number,
-            w.capacity as capacity,
-            'свободных мест нет' as status
+            w.number as number1,
+            w.capacity as capacity1,
+            'свободных мест нет' as status1
         from ward w
                  left join diagnosis d on w.id = d.ward_id
                  left join hospitalization h on h.id = d.hospitalization_id
         where h.start_at > '2021-07-07' and h.start_at < '2021-07-08'
-        group by number, capacity
+        group by w.number, w.capacity
         having count(d.ward_id)=w.capacity
         union all
-        select w.number number, capacity as capacity, 'пустая' as status from ward w
+        select w.number as number1, w.capacity as capacity1, 'пустая' as status1 from ward w
         where id not in (
             select
                 w.id as id
@@ -68,6 +75,5 @@ begin
                      left join hospitalization h on h.id = d.hospitalization_id
             where h.start_at > '2021-07-07' and h.start_at < '2021-07-08'
         )
-    ) select number, capacity, status from ward_capacity_and_fullness;
-end;
-$$ language plpgsql;
+    ) select number1::varchar, capacity1::bigint, status1::varchar from ward_capacity_and_fullness;
+end;$$;
