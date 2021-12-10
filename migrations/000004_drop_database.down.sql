@@ -19,3 +19,4 @@ drop type if exists medical_profile;
 drop function if exists ward_capacity();
 drop function if exists ward_status();
 drop function if exists ward_status_by_date();
+drop function if exists is_patient_long_term();
