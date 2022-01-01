@@ -47,12 +47,12 @@ select
 from
     generate_series(1, 50);
 
-update medical_staff set qualification='мед. сестра'::medical_qualification
+update medical_staff set qualification='мед. сестра'::medical_qualification, patient_limit=50
 where dob < (now() - interval '25 year') and dob > (now() - interval '60 year') and sex='женский';
-update medical_staff set qualification='младший персонал'::medical_qualification
+update medical_staff set qualification='младший персонал'::medical_qualification, patient_limit=20
 where dob < (now() - interval '23 year') and dob >= (now() - interval '40 year') and qualification is null;
-update medical_staff set qualification='средний персонал'::medical_qualification
+update medical_staff set qualification='средний персонал'::medical_qualification, patient_limit=10
 where dob < (now() - interval '40 year') and dob >= (now() - interval '50 year') and qualification is null;
-update medical_staff set qualification='старший персонал'::medical_qualification
+update medical_staff set qualification='старший персонал'::medical_qualification, patient_limit=5
 where dob < (now() - interval '50 year') and qualification is null;
 

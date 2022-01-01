@@ -88,6 +88,15 @@ create table if not exists hospitalization
             on delete cascade
 );
 
+create index hospitalization_id_index
+    on hospitalization (id);
+
+create index hospitalization_patient_index
+    on hospitalization (patient_id);
+
+create index hospitalization_date_index
+    on hospitalization (start_at, end_at);
+
 alter table hospitalization
     owner to postgres;
 
@@ -140,6 +149,9 @@ create table if not exists diagnosis
         references ward
 );
 
+create index diagnosis_ward_index
+    on diagnosis (ward_id);
+
 alter table diagnosis
     owner to postgres;
 
@@ -155,6 +167,7 @@ create table if not exists medical_staff
     carier_start   date default null,
     sex            sex                                 not null,
     qualification  medical_qualification default null,
+    patient_limit  integer,
     specialization medical_specialization              not null,
     profile        medical_profile                     not null,
     created_at     timestamp default CURRENT_TIMESTAMP not null,
@@ -163,6 +176,9 @@ create table if not exists medical_staff
         constraint medical_staff_department_id_fk
             references department
     );
+
+create index medical_staff_patient_limit_index
+    on medical_staff (patient_limit);
 
 alter table medical_staff
     owner to postgres;
