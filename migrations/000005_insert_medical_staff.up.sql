@@ -42,7 +42,7 @@ select
     'женский',
     (array['инфекционист'::medical_specialization, 'эпидемиолог'::medical_specialization, 'реаниматолог'::medical_specialization, 'хирург'::medical_specialization, 'дерматовенеролог'::medical_specialization])[floor(random() * 5 + 1)],
     (array['нейроинфекции'::medical_profile, 'воздушно-капельные инфекции'::medical_profile, 'гепатит'::medical_profile, 'ВИЧ-инфекции'::medical_profile, 'оппортунистические инфекции'::medical_profile, 'кожные и венерические инфекции'::medical_profile])[floor(random() * 6 + 1)],
-    now() - '7 years'::interval * random(),
+    (now() - '7 years'::interval) - '1 year'::interval * random(),
     (select array (select id from department))[floor(random() * (select count(id) from department) + 1)]
 from
     generate_series(1, 50);

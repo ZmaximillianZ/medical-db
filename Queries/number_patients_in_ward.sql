@@ -10,8 +10,8 @@ from hospitalization h
 left outer join diagnosis d on h.id = d.hospitalization_id
 left join ward w on d.ward_id = w.id
 left join department d2 on w.department_id = d2.id
-where h.created_at > '2020-11-01' and
-      h.end_at     < '2020-11-14'
+where h.created_at > '2020-12-01' and
+      h.end_at     < '2020-12-14'
 group by w.id, w.number, w.type, w.capacity, w.service, d2.name;
 
 

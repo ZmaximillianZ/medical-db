@@ -6,6 +6,7 @@ insert into patient (
     sex,
     has_insurance,
     status,
+    created_at,
     medical_staff_id
 )
 select
@@ -16,6 +17,7 @@ select
     'мужской',
     (round(random())::int)::boolean,
     (array['нормальное'::patient_status, 'критическое'::patient_status, 'легкое'::patient_status])[floor(random() * 3 + 1)],
+    (now() - '2 days'::interval) - '7 year'::interval * random(),
     (select array (select id from medical_staff))[floor(random() * (select count(id) from medical_staff) + 1)]
 from
     generate_series(1, 25000);
@@ -28,6 +30,7 @@ insert into patient (
     sex,
     has_insurance,
     status,
+    created_at,
     medical_staff_id
 )
 select
@@ -38,13 +41,7 @@ select
     'женский',
     (round(random())::int)::boolean,
     (array['нормальное'::patient_status, 'критическое'::patient_status, 'легкое'::patient_status])[floor(random() * 3 + 1)],
+    (now() - '2 days'::interval) - '7 year'::interval * random(),
     (select array (select id from medical_staff))[floor(random() * (select count(id) from medical_staff) + 1)]
 from
     generate_series(1, 25000);
-
-with medical_staff_created_at as (
-    select created_at as synced_created_at, id from medical_staff
-) update patient as p
-set created_at=(now() - (now() - medical_staff_created_at.synced_created_at)::interval * random())
-from medical_staff_created_at
-where p.medical_staff_id=medical_staff_created_at.id;
